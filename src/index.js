@@ -1,11 +1,17 @@
 import template from 'babel-template'
 import * as t from 'babel-types'
+import * as loaderUtils from 'loader-utils'
 
-const buildPolyfill = template(`
+const loaderOptions = loaderUtils.getOptions(this) || {}
+const defaultOptions = {
+  buildPolyfill: `
   var PROMISE = typeof Promise === 'undefined'
     ? require('es6-promise').Promise
-    : Promise
-`)
+    : Promise`
+}
+const options = Object.assign({}, defaultOptions, loaderOptions)
+
+const buildPolyfill = template(options.buildPolyfill)
 
 const replaceIdentifier = {
   ReferencedIdentifier (path) {
