@@ -9,6 +9,8 @@ const defaultOptions = {
   replacement: null
 }
 
+let replacement = '';
+
 const replaceIdentifier = {
   ReferencedIdentifier (path) {
     const { node, scope } = path
@@ -16,7 +18,9 @@ const replaceIdentifier = {
     if (node.name !== 'Promise') return
     if (scope.getBindingIdentifier(node.name)) return
 
-    path.replaceWith(this.getReplacement())
+    replacement
+      ? path.replaceWithSourceString(replacement)
+      : path.replaceWith(this.getReplacement())
   }
 }
 
@@ -26,7 +30,7 @@ export default function (api) {
       Program (path, state) {
         const options = Object.assign({}, defaultOptions, state.opts)
         const buildPolyfill = template(options.pragma)
-        const replacement = options.replacement
+        replacement = options.replacement
 
         const name = path.scope.generateUid('Promise')
 
@@ -34,13 +38,13 @@ export default function (api) {
         path.traverse(replaceIdentifier, {
           getReplacement () {
             used = true
-            return replacement || t.identifier(name)
+            return t.identifier(name)
           }
         })
 
         if (used) {
           path.unshiftContainer('body', buildPolyfill({
-            PROMISE: replacement || t.identifier(name)
+            PROMISE: t.identifier(name)
           }))
         }
       }

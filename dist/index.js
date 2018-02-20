@@ -10,7 +10,7 @@ exports.default = function (api) {
       Program: function (path, state) {
         var options = Object.assign({}, defaultOptions, state.opts);
         var buildPolyfill = (0, _babelTemplate2.default)(options.pragma);
-        var replacement = options.replacement;
+        replacement = options.replacement;
 
         var name = path.scope.generateUid('Promise');
 
@@ -18,13 +18,13 @@ exports.default = function (api) {
         path.traverse(replaceIdentifier, {
           getReplacement: function () {
             used = true;
-            return replacement || t.identifier(name);
+            return t.identifier(name);
           }
         });
 
         if (used) {
           path.unshiftContainer('body', buildPolyfill({
-            PROMISE: replacement || t.identifier(name)
+            PROMISE: t.identifier(name)
           }));
         }
       }
@@ -49,6 +49,8 @@ var defaultOptions = {
   replacement: null
 };
 
+var replacement = '';
+
 var replaceIdentifier = {
   ReferencedIdentifier: function (path) {
     var node = path.node,
@@ -58,7 +60,7 @@ var replaceIdentifier = {
     if (node.name !== 'Promise') return;
     if (scope.getBindingIdentifier(node.name)) return;
 
-    path.replaceWith(this.getReplacement());
+    replacement ? path.replaceWithSourceString(replacement) : path.replaceWith(this.getReplacement());
   }
 };
 //# sourceMappingURL=index.js.map
