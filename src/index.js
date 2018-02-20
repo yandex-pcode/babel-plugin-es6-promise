@@ -20,14 +20,14 @@ const replaceIdentifier = {
   }
 }
 
-export default function (api, pluginOptions) {
-  const options = Object.assign({}, defaultOptions, pluginOptions)
-  const buildPolyfill = template(options.pragma)
-  const replacement = options.replacement
-
+export default function (api) {
   return {
     visitor: {
-      Program (path) {
+      Program (path, state) {
+        const options = Object.assign({}, defaultOptions, state.opts)
+        const buildPolyfill = template(options.pragma)
+        const replacement = options.replacement
+
         const name = path.scope.generateUid('Promise')
 
         let used = false

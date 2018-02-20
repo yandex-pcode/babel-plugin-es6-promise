@@ -4,14 +4,14 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (api, pluginOptions) {
-  var options = Object.assign({}, defaultOptions, pluginOptions);
-  var buildPolyfill = (0, _babelTemplate2.default)(options.pragma);
-  var replacement = options.replacement;
-
+exports.default = function (api) {
   return {
     visitor: {
-      Program: function (path) {
+      Program: function (path, state) {
+        var options = Object.assign({}, defaultOptions, state.opts);
+        var buildPolyfill = (0, _babelTemplate2.default)(options.pragma);
+        var replacement = options.replacement;
+
         var name = path.scope.generateUid('Promise');
 
         var used = false;
