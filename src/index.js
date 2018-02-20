@@ -1,17 +1,13 @@
 import template from 'babel-template'
 import * as t from 'babel-types'
-import * as loaderUtils from 'loader-utils'
 
-const loaderOptions = loaderUtils.getOptions(this) || {}
 const defaultOptions = {
-  buildPolyfill: `
+  pragma: `
   var PROMISE = typeof Promise === 'undefined'
     ? require('es6-promise').Promise
-    : Promise`
+    : Promise`,
+  replacement: `PROMISE`
 }
-const options = Object.assign({}, defaultOptions, loaderOptions)
-
-const buildPolyfill = template(options.buildPolyfill)
 
 const replaceIdentifier = {
   ReferencedIdentifier (path) {
@@ -24,7 +20,11 @@ const replaceIdentifier = {
   }
 }
 
-export default function () {
+export default function (api, pluginOptions) {
+  const options = Object.assign({}, defaultOptions, pluginOptions)
+  const buildPolyfill = template(options.pragma)
+  const replacement = options.replacement
+
   return {
     visitor: {
       Program (path) {
@@ -40,7 +40,7 @@ export default function () {
 
         if (used) {
           path.unshiftContainer('body', buildPolyfill({
-            PROMISE: t.identifier(name)
+            [replacement]: t.identifier(name)
           }))
         }
       }
