@@ -6,7 +6,7 @@ const defaultOptions = {
   var PROMISE = typeof Promise === 'undefined'
     ? require('es6-promise').Promise
     : Promise`,
-  replacement: `PROMISE`
+  replacement: null
 }
 
 const replaceIdentifier = {
@@ -34,13 +34,13 @@ export default function (api, pluginOptions) {
         path.traverse(replaceIdentifier, {
           getReplacement () {
             used = true
-            return t.identifier(name)
+            return replacement || t.identifier(name)
           }
         })
 
         if (used) {
           path.unshiftContainer('body', buildPolyfill({
-            [replacement]: t.identifier(name)
+            PROMISE: replacement || t.identifier(name)
           }))
         }
       }

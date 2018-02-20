@@ -18,13 +18,13 @@ exports.default = function (api, pluginOptions) {
         path.traverse(replaceIdentifier, {
           getReplacement: function () {
             used = true;
-            return t.identifier(name);
+            return replacement || t.identifier(name);
           }
         });
 
         if (used) {
           path.unshiftContainer('body', buildPolyfill({
-            [replacement]: t.identifier(name)
+            PROMISE: replacement || t.identifier(name)
           }));
         }
       }
@@ -46,7 +46,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var defaultOptions = {
   pragma: '\n  var PROMISE = typeof Promise === \'undefined\'\n    ? require(\'es6-promise\').Promise\n    : Promise',
-  replacement: 'PROMISE'
+  replacement: null
 };
 
 var replaceIdentifier = {
