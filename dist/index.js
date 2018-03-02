@@ -10,7 +10,6 @@ exports.default = function (api) {
       Program: function (path, state) {
         var options = Object.assign({}, defaultOptions, state.opts);
         var buildPolyfill = (0, _babelTemplate2.default)(options.pragma);
-        replacement = options.replacement;
 
         var name = path.scope.generateUid('Promise');
 
@@ -45,11 +44,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var defaultOptions = {
-  pragma: '\n  var PROMISE = typeof Promise === \'undefined\'\n    ? require(\'es6-promise\').Promise\n    : Promise',
-  replacement: null
+  pragma: '\n  var PROMISE = typeof Promise === \'undefined\'\n    ? require(\'es6-promise\').Promise\n    : Promise'
 };
-
-var replacement = '';
 
 var replaceIdentifier = {
   ReferencedIdentifier: function (path) {
@@ -60,7 +56,7 @@ var replaceIdentifier = {
     if (node.name !== 'Promise') return;
     if (scope.getBindingIdentifier(node.name)) return;
 
-    replacement ? path.replaceWithSourceString(replacement) : path.replaceWith(this.getReplacement());
+    path.replaceWith(this.getReplacement());
   }
 };
 //# sourceMappingURL=index.js.map

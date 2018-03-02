@@ -36,8 +36,7 @@
   "homepage": "https://github.com/novemberborn/babel-plugin-es6-promise#readme",
   "dependencies": {
     "babel-template": "^6.7.0",
-    "babel-types": "^6.7.2",
-    "loader-utils": "^1.1.0"
+    "babel-types": "^6.7.2"
   },
   "devDependencies": {
     "@novemberborn/as-i-preach": "^6.0.0",
